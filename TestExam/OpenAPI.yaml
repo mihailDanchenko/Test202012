@@ -1,9 +1,96 @@
 openapi: 3.0.0
 info:
-  title: Title
-  description: Title
+  title: order-crud
+  description: Сервис ведения заявок
   version: 1.0.0
 servers:
-  - url: 'https'
+  - url: '{server}'
+tags:
+  -   name: frontend
+      description: Методы сервиса для работы с фронтом
+
 paths:
-  
+
+  /v1/order:
+    post:
+      summary: "Создание новой заявки на ответсвенное хранение"
+      operationId: createOrder
+      tags:
+        - frontend
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OrderCreateRequest'
+        required: true
+      responses:
+        201:
+          description: Created
+        403:
+          description: "Нет доступа"
+        400:
+          description: "Некорректный запрос"
+        409:
+          description: "Запись уже существует"
+
+
+
+components:
+  schemas:
+    OrderCreateRequest:
+      type: object
+      properties:
+        storage_uuid:
+          type: string
+          format: uuid
+          description: "uuid склада, для которого заполнена заявка"
+        cargo_description:
+          type: string
+          description: "Описание груза"
+          example: "Комплекты деталей металопроката"
+        cargo_value:
+          type: integer
+          format: int
+          minimum: 1
+          description: "Общий объем груза в литрах"
+        cargo_value_unit:
+          type: string
+          enum: [
+            'LITER',
+            'METER3',
+            'DAL'
+          ]
+          description: "Единица измерения объема груза, указанная клиентом"
+        cargo_weight:
+          type: integer
+          format: int
+          minimum: 1
+          description: "Общий вес груза в килограммах"
+        fileUuids:
+          description: "Массив идентификаторов файлов, приложенных к заказу"
+          type: array
+          items:
+            type: string
+            format: uuid
+            description: "UUID файла"
+        from_storage_date:
+          type: string
+          format: date
+          description: "Дата ханения С"
+        to_storage_date:
+          type: string
+          format: date
+          description: "Дата хранения По"
+        is_timeless:
+          type: boolean
+          description: "Признак, хранение осуществляется до востребования"
+        comment:
+          type: string
+          description: "Сопроводительное письмо"
+          example: "Добрый день! Очень заинтересовал ваш склад"
+      required:
+        - cargo_description
+        - cargo_value
+        - cargo_value_unit
+        - cargo_weight
+        - from_storage_date
