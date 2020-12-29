@@ -26,12 +26,8 @@ paths:
       responses:
         201:
           description: Created
-        403:
-          description: "Нет доступа"
         400:
           description: "Некорректный запрос"
-        409:
-          description: "Запись уже существует"
 
 
 
